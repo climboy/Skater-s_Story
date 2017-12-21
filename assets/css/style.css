@@ -1,0 +1,16 @@
+#background {
+  background-image: url(img/background.jpg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+#play {
+  margin-left: 62%;
+  margin-top: -1%;
+}
+
+h1 {
+ margin-left: 50%;
+ margin-top: 20%;
+ font-family: 'Geo', sans-serif;
+ font-size: 50px;
+}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Skater's Story</title>
+        <script src="//cdn.jsdelivr.net/phaser/2.5.0/phaser.min.js"></script>
+        <style type="text/css">
+        	html, body {
+        		margin: 0;
+        		padding: 0;
+        	}
+        </style>
+    </head>
+    <body>
+
+  </body>
+  <script type="text/javascript">
+  var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, render: render });
+
+  function preload() {
+      game.load.baseURL = './img/';
+      game.load.image('mushroom', 'champi.png');
+
+  }
+
+  var picture;
+
+  function create() {
+
+      game.stage.backgroundColor = '#6688ee';
+
+      picture = game.add.sprite(game.world.centerX, game.world.centerY, 'mushroom');
+      picture.anchor.setTo(0.5, 0.5);
+
+      //  Here we'll create a basic timed event. This is a one-off event, it won't repeat or loop:
+      //  The first parameter is how long to wait before the event fires. In this case 4 seconds (you could pass in 4000 as the value as well.)
+      //  The next parameter is the function to call ('fadePicture') and finally the context under which that will happen.
+
+      game.time.events.add(Phaser.Timer.SECOND * 4, fadePicture, this);
+
+  }
+
+  function fadePicture() {
+
+      game.add.tween(picture).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
+
+  }
+
+  function render() {
+
+      game.debug.text("Time until event: " + game.time.events.duration, 32, 32);
+
+  }
+  </script>
+</html>

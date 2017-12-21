@@ -1,0 +1,533 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Skater's Story</title>
+        <script src="//cdn.jsdelivr.net/phaser/2.5.0/phaser.min.js"></script>
+        <script src="vendor/phaser-tiled.js"></script>
+        <style type="text/css">
+        	html, body {
+        		margin: 0;
+        		padding: 0;
+            background-color: #3e3e3e;
+        	}
+        </style>
+    </head>
+    <body>
+
+    <script type="text/javascript">
+
+    window.onload = function() {
+
+        var game = new Phaser.Game("100%", 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
+
+		function preload() {
+		    game.stage.backgroundColor = '#424141';
+
+		    game.load.baseURL = 'assets/images/';
+		    game.load.crossOrigin = 'anonymous';
+
+		    game.load.spritesheet('player', 'player_spritesheet.png', 32, 48, 15);
+		    game.load.image('platform', 'sol.png');
+		    game.load.image('bloc', 'bloc.png');
+		    game.load.image('champi', 'champi.png');
+        game.load.image('ennemi', 'fire.png');
+        game.load.image('flower', 'flower.png');
+        game.load.image('bullet', 'bullet.png');
+        game.load.image('coin', 'coin.png');
+        game.load.image('tree', 'control.png');
+        game.load.image('skelet', 'skelet.png');
+        game.load.image('background', 'background.jpeg');
+        game.load.image('special', 'special.png');
+        game.load.audio('musicgame', 'musicgame.mp3');
+
+
+		}
+
+		var player;
+		var platforms;
+		var blocs;
+		var powerups;
+		var cursors;
+		var jumpButton;
+    var ennemis;
+    var flowers;
+    var weapon;
+    var bullets;
+    var sprite;
+    var fireButton;
+    var score = 0;
+    var ScoreText;
+    var Time;
+    var TimeText;
+    var trees;
+    var endgame = false;
+    var specials;
+    var music;
+
+
+		function create() {
+
+      game.add.tileSprite(0,0,4800,600,'background');
+
+			var blocP1;
+
+			game.world.setBounds(0, 0, 4800, 600);
+
+		    player = game.add.sprite(100, 500, 'player');
+
+
+		    player.animations.add('idle_small', [0], 1, true);
+		    player.animations.add('move_small', [1,2], 8, true);
+		    player.animations.add('jump_small', [3], 1, false);
+		    player.animations.add('die_small', [4], 1, false);
+
+		    player.animations.add('idle_tall', [5], 1, false);
+		    player.animations.add('move_tall', [6,7], 8, true);
+		    player.animations.add('jump_tall', [8], 1, false);
+		    player.animations.add('crouch_tall', [9], 1, false);
+
+        player.animations.add('idle_skate', [10], 1, true);
+        player.animations.add('move_skate', [11,12], 8, true);
+        player.animations.add('jump_skate', [13], 1, true);
+        player.animations.add('crouch_skate', [14], 1, true);
+
+
+
+		    player.animations.play('idle_small');
+
+		    player.data.size = 'small';
+		    player.anchor.setTo(0.5,0.5);
+
+		    game.physics.arcade.enable(player);
+		    game.physics.arcade.checkCollision.down = false;
+        game.physics.arcade.checkCollision.right = false;
+
+
+		    player.body.collideWorldBounds = true;
+		    player.body.outOfBoundsKill = true;
+		    player.body.gravity.y = 1200;
+
+		    platforms = game.add.physicsGroup();
+
+		    platforms.create(0, 538, 'platform');
+		    platforms.create(800, 538, 'platform');
+		    platforms.create(1600, 538, 'platform');
+		    platforms.create(2500, 538, 'platform');
+		    platforms.create(3400, 538, 'platform');
+        platforms.create(4200, 538, 'platform');
+        platforms.create(5000, 538, 'platform');
+
+
+		    platforms.setAll('body.immovable', true);
+
+		    blocs = game.add.physicsGroup();
+
+
+		    blocs.create(64, 440, 'bloc');
+		    var blocP1 = blocs.create(96, 440, 'bloc');
+		    blocs.create(128, 440, 'bloc');
+        var blocP2 = blocs.create(160, 440, 'bloc');
+        var blocP3 = blocs.create(192, 440, 'bloc');
+
+
+		    blocs.setAll('body.immovable', true);
+		    blocP1.data.powerup = 'coin';
+        blocP2.data.powerup = 'coin';
+        blocP3.data.powerup = 'coin';
+
+		    blocs.create(1064, 440, 'bloc');
+		    var blocP1 = blocs.create(1096, 440, 'bloc');
+		    blocs.create(1128, 440, 'bloc');
+        var blocP3 = blocs.create(1160, 440, 'bloc');
+        var blocP4 = blocs.create(1192, 440, 'bloc');
+        var blocP5 = blocs.create(1224, 440, 'bloc');
+
+
+		    blocs.setAll('body.immovable', true);
+		    blocP1.data.powerup = 'coin';
+        blocP3.data.powerup = 'coin';
+        blocP4.data.powerup = 'coin';
+        blocP5.data.powerup = 'coin';
+
+        blocs.create(1800, 440, 'bloc');
+		    var blocP1 = blocs.create(1832, 440, 'bloc');
+		    blocs.create(1864, 440, 'bloc');
+        var blocP3 = blocs.create(2036, 440, 'bloc');
+        var blocP4 = blocs.create(2068, 440, 'bloc');
+        var blocP5 = blocs.create(2100, 440, 'bloc');
+        blocs.create(2132, 440, 'bloc');
+        blocs.create(2164, 440, 'bloc');
+
+
+
+		    blocs.setAll('body.immovable', true);
+		    blocP1.data.powerup = 'coin';
+        blocP3.data.powerup = 'coin';
+        blocP4.data.powerup = 'coin';
+        blocP5.data.powerup = 'coin';
+
+        specials = game.add.physicsGroup();
+
+        var specialP1 = specials.create(2000, 440, 'special');
+
+        specials.setAll('body.immovable', true);
+        specialP1.data.powerup = 'flower'
+
+
+		    powerups = game.add.physicsGroup();
+
+		    game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
+
+		    cursors = game.input.keyboard.createCursorKeys();
+		    jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+        ennemis = game.add.physicsGroup();
+
+        var ennemi = ennemis.create(500, 500, 'ennemi');
+
+        ennemi.body.velocity.x = -60* ennemi.scale.x;
+        ennemi.body.collideWorldBounds = true;
+          ennemi.body.gravity.y = 1200;
+
+        var ennemi = ennemis.create(600, 500, 'ennemi');
+
+        ennemi.body.velocity.x = -60* ennemi.scale.x;
+        ennemi.body.collideWorldBounds = true;
+          ennemi.body.gravity.y = 1200;
+
+          var ennemi = ennemis.create(2900, 500, 'ennemi');
+
+          ennemi.body.velocity.x = -60* ennemi.scale.x;
+          ennemi.body.collideWorldBounds = true;
+            ennemi.body.gravity.y = 1200;
+
+            var ennemi = ennemis.create(3000, 500, 'ennemi');
+
+            ennemi.body.velocity.x = -60* ennemi.scale.x;
+            ennemi.body.collideWorldBounds = true;
+              ennemi.body.gravity.y = 1200;
+
+              var ennemi = ennemis.create(3600, 500, 'ennemi');
+
+              ennemi.body.velocity.x = -60* ennemi.scale.x;
+              ennemi.body.collideWorldBounds = true;
+                ennemi.body.gravity.y = 1200;
+
+        var ennemi = ennemis.create(1600, 500, 'skelet');
+
+        ennemi.body.velocity.x = -60* ennemi.scale.x;
+        ennemi.body.collideWorldBounds = true;
+          ennemi.body.gravity.y = 1200;
+
+        var ennemi = ennemis.create(1700, 500, 'skelet');
+
+        ennemi.body.velocity.x = -60* ennemi.scale.x;
+        ennemi.body.collideWorldBounds = true;
+          ennemi.body.gravity.y = 1200;
+
+          var ennemi = ennemis.create(4200, 500, 'skelet');
+
+          ennemi.body.velocity.x = -60* ennemi.scale.x;
+          ennemi.body.collideWorldBounds = true;
+            ennemi.body.gravity.y = 1200;
+
+            var ennemi = ennemis.create(4300, 500, 'skelet');
+
+            ennemi.body.velocity.x = -60* ennemi.scale.x;
+            ennemi.body.collideWorldBounds = true;
+              ennemi.body.gravity.y = 1200;
+
+
+          var gameoverLabel = stateText = game.add.text(500, 300, ' ', {font: '50px Arial', fill: '#F2F2F2'});
+        stateText.anchor.setTo(1.1, 0.2);
+
+        weapon = game.add.weapon(1000, 'bullet');
+
+          weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+          weapon.bulletSpeed = 250;
+          weapon.fireRate = 1000;
+
+        player.anchor.set(0.5);
+
+        game.physics.arcade.enable(player);
+
+        weapon.trackSprite(player, 0, 0, true);
+
+        cursors = this.input.keyboard.createCursorKeys();
+
+        fireButton = this.input.keyboard.addKey(Phaser.KeyCode.Z);
+
+        ScoreText = game.add.text(300, 10, 'score: 0', { fontSize: '32px', fill: '#FFF' });
+
+        ScoreText.fixedToCamera = true;
+        ScoreText.cameraOffset.setTo(250, 10);
+
+        var name = game.add.text(50, 10, "Thomas", { fontSize: '32px', fill: '#FFF'});
+        name.fixedToCamera = true;
+        name.cameraOffset.setTo(50, 10);
+
+        game.time.events.add(Phaser.Timer.SECOND * 180, fadePicture, this);
+        TimeText = game.add.text(200,500, "Time: ", { fontSize: '32px', fill: '#FFF' });
+        TimeText.fixedToCamera = true;
+        TimeText.cameraOffset.setTo(500, 10);
+
+        trees = game.add.physicsGroup();
+          trees.create(4500, 354, 'tree');
+          trees.setAll('body.immovable', true);
+          trees.setAll('body.moves', false);
+        pause_label = game.add.text(700, 10, 'Pause', { fontSize: '32px', fill: '#fff' });
+          pause_label.fixedToCamera = true;
+          pause_label.cameraOffset.setTo(700, 10);
+          pause_label.inputEnabled = true;
+          pause_label.events.onInputUp.add(function () {
+        game.paused = true;
+        });
+        game.input.onDown.add(unpause, self);
+
+        music = game.add.audio('musicgame');
+        music.onDecoded.add(start, this);
+
+		}
+
+		function update() {
+			game.physics.arcade.collide(player, platforms);
+			game.physics.arcade.collide(player, blocs, hitBloc);
+			game.physics.arcade.collide(player, powerups, hitPowerup);
+			game.physics.arcade.collide(powerups, platforms);
+			game.physics.arcade.collide(powerups, blocs);
+      game.physics.arcade.collide(player, ennemis, hitEnnemi);
+      game.physics.arcade.collide(ennemis, platforms);
+      game.physics.arcade.collide(player, specials, hitSpecial);
+      game.physics.arcade.overlap(weapon.bullets, ennemis, hitBulletEnnemi);
+      game.physics.arcade.overlap(player, trees, hitTree);
+
+
+
+
+      if (endgame == false) {
+		    player.body.velocity.x = 0;
+
+
+		    if (cursors.left.isDown)
+		    {
+		        player.body.velocity.x = -250;
+		        if(player.scale.x > 0) {
+			        player.scale.x *= -1;
+              weapon.bulletSpeed = -250;
+			    }
+		    }
+		    else if (cursors.right.isDown)
+		    {
+		        player.body.velocity.x = 250;
+		        if(player.scale.x < 0) {
+					player.scale.x *= -1;
+          weapon.bulletSpeed = 250;
+		        }
+		    }
+
+		    if ( (cursors.up.isDown || jumpButton.isDown) && (player.body.onFloor() || player.body.touching.down))
+		    {
+		        player.body.velocity.y = -500;
+		    }
+
+		    if(!(player.body.onFloor() || player.body.touching.down)) {
+
+		    		player.animations.play('jump_' + player.data.size);
+
+		    } else {
+			    if(player.body.velocity.x != 0) {
+
+			    		player.animations.play('move_' + player.data.size);
+
+			    } else {
+
+			    		player.animations.play('idle_' + player.data.size);
+
+			    }
+			}
+
+    if (fireButton.isDown && player.data.size=="skate")
+    {
+        weapon.fire();
+    }
+
+      // Powerups
+			powerups.forEach(function(item) {
+				// S'il entre en collision par la gauche ou la droite
+				if(item.body.blocked.left || item.body.blocked.right) {
+					item.scale.x = (item.body.blocked.left ? Math.abs(item.scale.x) : -Math.abs(item.scale.x));
+					item.body.velocity.x = 100 * item.scale.x;
+
+				}
+			});
+
+
+      ennemis.forEach(function(item) {
+				// S'il entre en collision par la gauche ou la droite
+				if(item.body.blocked.left || item.body.blocked.right) {
+					item.scale.x = (item.body.blocked.left ? Math.abs(item.scale.x) : -Math.abs(item.scale.x));
+					item.body.velocity.x = 100 * item.scale.x;
+
+				}
+			});
+
+      if (player.body.y > 650) {
+        player.kill();
+            stateText.text = " GAME OVER \n Click to restart";
+            stateText.visible = true;
+            setTimeout(function()
+            {location.href = 'test.html';},
+            1000);
+          }
+        }
+		}
+
+
+function start() {
+    music.fadeIn(1000);
+}
+
+    function fadePicture() {
+
+        game.add.tween(player).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
+
+    }
+
+    function unpause(event) {
+      if (game.paused) {
+        game.paused = false;
+      }
+    }
+
+		function render() {
+      TimeText.text = "Time: " + Math.ceil(game.time.events.duration / 1000);
+		}
+
+		function hitBloc(heros, bloc) {
+			if(bloc.body.touching.down) {
+				// Si le bloc contient un powerup, on le fait apparaitre
+        if(bloc.data.powerup) {
+        					// Création du powerup
+        					var powerup = powerups.create(bloc.position.x + bloc.width / 2, bloc.position.y - 16, bloc.data.powerup);
+        					powerup.anchor.setTo(.5,.5);
+        					powerup.body.velocity.x = 100 * powerup.scale.x;
+        					powerup.body.collideWorldBounds = true;
+        			    	powerup.body.gravity.y = 1200;
+        			    	powerup.body.stopVelocityOnCollide = false;
+        					bloc.data.powerup = null;
+        				}
+
+
+
+				// Change la couleur
+				if(player.data.size == 'tall' || player.data.size =='skate') {
+					bloc.destroy();
+				} else {
+					bloc.tint = 0x909090;
+				}
+
+			}
+		}
+
+    function hitSpecial(heros, special) {
+      if(special.body.touching.down) {
+        // Si le bloc contient un powerup, on le fait apparaitre
+        if(special.data.powerup) {
+                  // Création du powerup
+                  var powerup = powerups.create(special.position.x + special.width / 2, special.position.y - 16, special.data.powerup);
+                  powerup.anchor.setTo(.5,.5);
+                  powerup.body.velocity.x = 100 * powerup.scale.x;
+                  powerup.body.collideWorldBounds = true;
+                    powerup.body.gravity.y = 1200;
+                    powerup.body.stopVelocityOnCollide = false;
+                  special.data.powerup = null;
+                }
+
+
+
+        // Change la couleur
+        if(player.data.size == 'tall' || player.data.size =='skate') {
+          special.destroy();
+        } else {
+          special.tint = 0x909090;
+        }
+
+      }
+    }
+
+		function hitPowerup(heros, powerup) {
+			switch(powerup.key) {
+				case "champi":
+        if (player.data.size!="skate") {
+          player.data.size = 'tall';
+
+        }
+
+
+           break;
+
+          case "flower":
+          player.data.size = 'skate';
+
+				break;
+
+			}
+
+			powerup.destroy();
+
+      collectCoin();
+		}
+
+    function collectCoin (player, powerup) {
+
+        score += 1000 ;
+        ScoreText.text = 'Score:' + score ;
+
+    }
+
+    function hitEnnemi(heros, ennemi) {
+   if (ennemi.body.touching.up) {
+     ennemi.kill();
+
+         score += 500 ;
+         ScoreText.text = 'Score:' + score ;
+     }
+
+   else {
+   	if (player.data.size=='small') {
+      player.kill();
+      setTimeout(function()
+      {location.href = 'test.html';},
+      1000);
+
+   	} else {
+     		player.data.size = 'small';
+   	}
+   }
+    }
+
+    function hitBulletEnnemi(bullet, ennemi) {
+        	ennemi.kill();
+        	bullet.kill();
+
+            score += 500 ;
+            ScoreText.text = 'Score:' + score ;
+        }
+
+    function hitTree(tree, player) {
+      endgame = true;
+      player.body.velocity.x = 250;
+      score += 20000 ;
+      ScoreText.text = 'Score:' + score ;
+      setTimeout(function()
+      {location.href = 'jeu2.html';},
+      2000);
+    }
+
+    };
+
+    </script>
+
+    </body>
+</html>
